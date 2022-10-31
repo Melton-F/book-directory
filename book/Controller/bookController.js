@@ -1,8 +1,9 @@
 const Book = require('../Model/bookModel')
+const User = require('../../user/model/userModel')
 
 const show_All_Books = (req, res)=>{
     Book.find().populate("users", "name")
-        .select("_id bookName genere authorName users")
+        .select("_id bookName genere authorName")
         .then(books=>{
             if(books<1){
                 return res.status(404).json({
@@ -37,7 +38,11 @@ const create_Book = (req, res)=>{
             res.status(201).json({
                 status:"Success",
                 message:"book created",
-                createdBook:doc
+                createdBook:{
+                    bookName:doc.bookName,
+                    _id:doc._id,
+                    authorName:doc.authorName
+                }
             })
         })
         .catch(err=>{
@@ -108,6 +113,20 @@ const update_UserIn_Book = async (req, res)=>{
 
         Book.findByIdAndUpdate(req.params.id, {users:arrayField}, {new:true})
             .then(updatedField=>{
+                if(updatedField){
+                    const userID = req.body.users
+                    User.findById(userID)
+                        .then(result=>{
+                            let emptyBooksArr= result.books
+                            emptyBooksArr.push(req.params.id)
+
+                            User.findByIdAndUpdate(req.body.users, {books:emptyBooksArr}, {new:true})
+                                .then(()=>{
+                                    console.log("succesfully buyed books updated in user docs")
+                                })
+                            // console.log(result);
+                        })
+                }
                 res.status(200).json({
                     status:"Updated",
                     updatedData:updatedField

@@ -2,6 +2,7 @@ const User = require('../model/userModel')
 
 const show_All_Users = (req, res)=>{
     User.find()
+        .populate("books","bookName")
         .then(users=>{
             if(users<1){
                 return res.status(404).json({
@@ -69,6 +70,23 @@ const get_User_By_Id = (req, res)=>{
         })
 }
 
+const update_user = (req, res)=>{
+    User.findByIdAndUpdate(req.params.id, req.body, {new:true})
+        .then(doc=>{
+            res.status(200).json({
+                status:"Success",
+                message:"user updated",
+                updatedUser:doc
+            })
+        })
+        .catch(err=>{
+            res.status(400).json({
+                status:"fail",
+                error:err
+            })
+        })
+}
+
 const delete_user = (req, res)=>{
     User.deleteOne({_id:req.params.id})
         .exec()
@@ -86,6 +104,8 @@ const delete_user = (req, res)=>{
         })
 }
 
+
+
 module.exports = {
-    show_All_Users, create_User, get_User_By_Id, delete_user
+    show_All_Users, create_User, get_User_By_Id, delete_user, update_user
 }
