@@ -1,8 +1,8 @@
 const Book = require('../Model/bookModel')
 
 const show_All_Books = (req, res)=>{
-    Book.find()
-        .select("_id bookName genere authorName")
+    Book.find().populate("users", "name")
+        .select("_id bookName genere authorName users")
         .then(books=>{
             if(books<1){
                 return res.status(404).json({
@@ -13,6 +13,7 @@ const show_All_Books = (req, res)=>{
             res.status(200).json({
                 status:"Success",
                 message:"books fetched from the library",
+                no_Of_Books:books.length,
                 books
             })
         })
@@ -57,8 +58,43 @@ const get_BookBy_Id = (req, res)=>{
             })
         })
         .catch(err=>{
-            res.staus(400).json({
-                staus:"Fail",
+            res.status(400).json({
+                status:"Fail",
+                error:err
+            })
+        })
+}
+
+const delete_book_by_Id = (req, res)=>{
+    Book.findByIdAndRemove(req.params.id).then(()=>{
+        res.status(204).json({
+            message:"book deleted successfully"
+        })
+    })
+    .catch(err=>{
+        res.status(400).json({
+            status:"Fail",
+            message:"book not deleted"
+        })
+    })
+}
+
+const update_Book_by_ID = (req, res)=>{
+    Book.findByIdAndUpdate(req.params.id, req.body, {new:true})
+        .then(doc=>{
+            if(!doc){
+                return res.status(404).json({
+                    message:"document not found"
+                })
+            }
+            res.status(200).json({
+                status:"Success",
+                updated_Document:doc
+            })
+        })
+        .catch(err=>{
+            res.status(400).json({
+                status:"Fail",
                 error:err
             })
         })
@@ -88,5 +124,5 @@ const update_UserIn_Book = async (req, res)=>{
 }
 
 module.exports = {
-    show_All_Books, create_Book, get_BookBy_Id, update_UserIn_Book
+    show_All_Books, create_Book, get_BookBy_Id, update_UserIn_Book, delete_book_by_Id, update_Book_by_ID
 }

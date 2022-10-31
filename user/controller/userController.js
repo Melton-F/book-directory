@@ -47,7 +47,45 @@ const create_User = (req, res)=>{
     })
 }
 
+const get_User_By_Id = (req, res)=>{
+    User.findById(req.params.id)
+        .then(user=>{
+            if(!user){
+                res.status(404).json({
+                    status:"Fail",
+                    message:"User not Found"
+                })
+            }
+            res.status(200).json({
+                status:"Success",
+                user
+            })
+        })
+        .catch(err=>{
+            res.status(400).json({
+                status:"Fail",
+                error:err
+            })
+        })
+}
+
+const delete_user = (req, res)=>{
+    User.deleteOne({_id:req.params.id})
+        .exec()
+        .then(result=>{
+            res.status(204).json({
+                status:"Success",
+                message:"user deleted successfully"
+            })
+        })
+        .catch(err=>{
+            res.status(400).json({
+                status:"Fail",
+                error:err
+            })
+        })
+}
 
 module.exports = {
-    show_All_Users, create_User
+    show_All_Users, create_User, get_User_By_Id, delete_user
 }
