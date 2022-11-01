@@ -1,6 +1,6 @@
-const express = require('express')
+import express from 'express'
+import bookController from './../Controller/bookController'
 const router = express.Router()
-const bookController = require('../Controller/bookController')
 
 //Routers
 router.route('/')

@@ -1,4 +1,4 @@
-const User = require('../model/userModel')
+import User from "./../model/userModel"
 
 const show_All_Users = (req, res)=>{
     User.find()

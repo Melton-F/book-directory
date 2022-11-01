@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose from "mongoose"
 
 const bookSchema = new mongoose.Schema({
     bookName:{
@@ -17,7 +17,10 @@ const bookSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
     }]
-}, {versionKey:false})
+},
+{Timestamp:true}, 
+{versionKey:false}
+)
 
 const Book = mongoose.model('Book', bookSchema) 
 module.exports = Book
